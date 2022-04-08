@@ -17,7 +17,7 @@ std::ostream& operator<<(std::ostream& out, Cube& cube)
 		}
 		std::cout << std::endl;
 	}
-	 
+
 	for (int i = 0; i < 3; i++)
 	{
 		for (int j = 0; j < 3; j++)
@@ -78,7 +78,7 @@ void Cube::load_from_file(std::string filename)
 		for (int k = 0; k < 3; k++)
 		{
 			fin >> colour;
-			cube[Top][i][k] = colour;
+			cube[Top][i][k] = (Color)(std::find(colors, colors + 6, colour) - colors);
 		}
 	}
 
@@ -87,25 +87,25 @@ void Cube::load_from_file(std::string filename)
 		for (int j = 0; j < 3; j++)
 		{
 			fin >> colour;
-			cube[Left][i][j] = colour;
+			cube[Left][i][j] = (Color)(std::find(colors, colors + 6, colour) - colors);
 		}
 
 		for (int j = 0; j < 3; j++)
 		{
 			fin >> colour;
-			cube[Forward][i][j] = colour;
+			cube[Forward][i][j] = (Color)(std::find(colors, colors + 6, colour) - colors);
 		}
 
 		for (int j = 0; j < 3; j++)
 		{
 			fin >> colour;
-			cube[Right][i][j] = colour;
+			cube[Right][i][j] = (Color)(std::find(colors, colors + 6, colour) - colors);
 		}
 
 		for (int j = 0; j < 3; j++)
 		{
 			fin >> colour;
-			cube[Back][i][j] = colour;
+			cube[Back][i][j] = (Color)(std::find(colors, colors + 6, colour) - colors);
 		}
 	}
 
@@ -114,7 +114,7 @@ void Cube::load_from_file(std::string filename)
 		for (int k = 0; k < 3; k++)
 		{
 			fin >> colour;
-			cube[Botton][i][k] = colour;
+			cube[Bottom][i][k] = (Color)(std::find(colors, colors + 6, colour) - colors);
 		}
 	}
 }
@@ -123,8 +123,8 @@ void Cube::load_from_file(std::string filename)
 
 void Cube::turn_matrix(int facet, bool cw)
 {
-	char facet_matrix[3][3];
-	char side_col_matrix[3][4];
+	Color facet_matrix[3][3];
+	Color side_col_matrix[3][4];
 
 	for (int i = 0; i < 3; i++)
 	{
@@ -161,7 +161,7 @@ void Cube::turn_matrix(int facet, bool cw)
 		{
 			side_col_matrix[j][0] = cube[Top][2][j];
 			side_col_matrix[j][1] = cube[Right][j][0];
-			side_col_matrix[j][2] = cube[Botton][0][j];
+			side_col_matrix[j][2] = cube[Bottom][0][j];
 			side_col_matrix[j][3] = cube[Left][j][2];
 		}
 		if (cw)
@@ -169,7 +169,7 @@ void Cube::turn_matrix(int facet, bool cw)
 			for (int i = 0; i < 3; i++)
 			{
 				cube[Right][i][0] = side_col_matrix[i][0];
-				cube[Botton][0][i] = side_col_matrix[2 - i][1];
+				cube[Bottom][0][i] = side_col_matrix[2 - i][1];
 				cube[Left][i][2] = side_col_matrix[i][2];
 				cube[Top][2][i] = side_col_matrix[2 - i][3];
 			}
@@ -179,7 +179,7 @@ void Cube::turn_matrix(int facet, bool cw)
 			for (int i = 0; i < 3; i++)
 			{
 				cube[Right][i][0] = side_col_matrix[2 - i][2];
-				cube[Botton][0][i] = side_col_matrix[i][3];
+				cube[Bottom][0][i] = side_col_matrix[i][3];
 				cube[Left][i][2] = side_col_matrix[2 - i][0];
 				cube[Top][2][i] = side_col_matrix[i][1];
 			}
@@ -191,7 +191,7 @@ void Cube::turn_matrix(int facet, bool cw)
 		{
 			side_col_matrix[j][0] = cube[Top][0][j];
 			side_col_matrix[j][1] = cube[Right][j][2];
-			side_col_matrix[j][2] = cube[Botton][2][j];
+			side_col_matrix[j][2] = cube[Bottom][2][j];
 			side_col_matrix[j][3] = cube[Left][j][0];
 		}
 		if (cw)
@@ -199,7 +199,7 @@ void Cube::turn_matrix(int facet, bool cw)
 			for (int i = 0; i < 3; i++)
 			{
 				cube[Right][i][2] = side_col_matrix[2 - i][2];
-				cube[Botton][2][i] = side_col_matrix[i][3];
+				cube[Bottom][2][i] = side_col_matrix[i][3];
 				cube[Left][i][0] = side_col_matrix[2 - i][0];
 				cube[Top][0][i] = side_col_matrix[i][1];
 			}
@@ -209,7 +209,7 @@ void Cube::turn_matrix(int facet, bool cw)
 			for (int i = 0; i < 3; i++)
 			{
 				cube[Right][i][2] = side_col_matrix[i][0];
-				cube[Botton][2][i] = side_col_matrix[2 - i][1];
+				cube[Bottom][2][i] = side_col_matrix[2 - i][1];
 				cube[Left][i][0] = side_col_matrix[i][2];
 				cube[Top][0][i] = side_col_matrix[2 - i][3];
 			}
@@ -221,7 +221,7 @@ void Cube::turn_matrix(int facet, bool cw)
 		{
 			side_col_matrix[j][0] = cube[Top][j][2];
 			side_col_matrix[j][1] = cube[Forward][j][2];
-			side_col_matrix[j][2] = cube[Botton][j][2];
+			side_col_matrix[j][2] = cube[Bottom][j][2];
 			side_col_matrix[j][3] = cube[Back][j][0];
 		}
 		if (cw)
@@ -230,7 +230,7 @@ void Cube::turn_matrix(int facet, bool cw)
 			{
 				cube[Top][i][2] = side_col_matrix[i][1];
 				cube[Forward][i][2] = side_col_matrix[i][2];
-				cube[Botton][i][2] = side_col_matrix[2 - i][3];
+				cube[Bottom][i][2] = side_col_matrix[2 - i][3];
 				cube[Back][i][0] = side_col_matrix[2 - i][0];
 			}
 		}
@@ -240,7 +240,7 @@ void Cube::turn_matrix(int facet, bool cw)
 			{
 				cube[Top][i][2] = side_col_matrix[2 - i][3];
 				cube[Forward][i][2] = side_col_matrix[i][0];
-				cube[Botton][i][2] = side_col_matrix[i][1];
+				cube[Bottom][i][2] = side_col_matrix[i][1];
 				cube[Back][i][0] = side_col_matrix[2 - i][2];
 			}
 		}
@@ -251,7 +251,7 @@ void Cube::turn_matrix(int facet, bool cw)
 		{
 			side_col_matrix[j][0] = cube[Top][j][0];
 			side_col_matrix[j][1] = cube[Forward][j][0];
-			side_col_matrix[j][2] = cube[Botton][j][0];
+			side_col_matrix[j][2] = cube[Bottom][j][0];
 			side_col_matrix[j][3] = cube[Back][j][2];
 		}
 		if (cw)
@@ -260,7 +260,7 @@ void Cube::turn_matrix(int facet, bool cw)
 			{
 				cube[Top][i][0] = side_col_matrix[2 - i][3];
 				cube[Forward][i][0] = side_col_matrix[i][0];
-				cube[Botton][i][0] = side_col_matrix[i][1];
+				cube[Bottom][i][0] = side_col_matrix[i][1];
 				cube[Back][i][2] = side_col_matrix[2 - i][2];
 			}
 		}
@@ -270,7 +270,7 @@ void Cube::turn_matrix(int facet, bool cw)
 			{
 				cube[Top][i][0] = side_col_matrix[i][1];
 				cube[Forward][i][0] = side_col_matrix[2 - i][2];
-				cube[Botton][i][0] = side_col_matrix[2 - i][3];
+				cube[Bottom][i][0] = side_col_matrix[2 - i][3];
 				cube[Back][i][2] = side_col_matrix[2 - i][0];
 			}
 		}
@@ -305,7 +305,7 @@ void Cube::turn_matrix(int facet, bool cw)
 			}
 		}
 	}
-	else if (facet == Botton)
+	else if (facet == Bottom)
 	{
 		for (int j = 0; j < 3; j++)
 		{
@@ -364,7 +364,7 @@ void Cube::U(bool cw)
 
 void Cube::D(bool cw)
 {
-	turn_matrix(Botton, cw);
+	turn_matrix(Bottom, cw);
 }
 
 void Cube::Mixing()
