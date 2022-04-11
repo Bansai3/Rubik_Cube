@@ -67,7 +67,7 @@ public:
 	void U(bool cw = true);
 	void D(bool cw = true);
 	void Mixing();
-	long getHash();
+	long long getHash();
 };
 
 /*

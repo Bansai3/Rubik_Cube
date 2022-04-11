@@ -371,11 +371,11 @@ void Cube::Mixing()
 	}
 }
 
-long Cube::getHash()
+long long Cube::getHash()
 {
-	long hash = 0;
-	int num = 0;
-	int primeNumbers[54] = { 2,   3,   5,   7,   11,  13,  17,  19,  23,
+	unsigned long long hash = 0;
+	unsigned long long num = 1;
+	/*int primeNumbers[54] = {2,   3,   5,   7,   11,  13,  17,  19,  23,
 							 29,  31,  37,  41,  43,  47,  53,  59,  61,
 							 67,  71,  73,  79,  83,  89,  97,  101, 103,
 							 107, 109, 113, 127, 131, 137, 139, 149, 151,
@@ -391,6 +391,20 @@ long Cube::getHash()
 			{
 				int x = (int)(std::find(colors, colors + 6, this->cube[color][i][j]) - colors);
 				hash += (num++) * (x + 1) * (i + 1) * (j + 1);
+			}
+		}
+	}*/
+
+	for (int color = 0; color < 6; color++)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+
+				int x = (int)(this->cube[color][i][j] - 'A' + 1);
+				hash = (hash + num * x) % INT64_MAX;
+				num = (num * 6) % INT64_MAX;
 			}
 		}
 	}
