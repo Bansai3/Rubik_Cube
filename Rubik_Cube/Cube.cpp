@@ -434,26 +434,26 @@ bool Cube::checkState()
 		if (abs(this->cube[i + 1][1][1] - this->cube[i][1][1]) != 3)
 			return false;
 	}
-	if (this->cube[Forward][0][1], this->cube[Top][2][1])
-		if (this->cube[Forward][1][0], this->cube[Left][2][1])
-			if (this->cube[Forward][2][1], this->cube[Bottom][0][1])
-				if (this->cube[Forward][1][2], this->cube[Right][1][0])
+	if (this->cube[Forward][0][1], this->cube[Top][2][1]);
+	if (this->cube[Forward][1][0], this->cube[Left][2][1]);
+	if (this->cube[Forward][2][1], this->cube[Bottom][0][1]);
+	if (this->cube[Forward][1][2], this->cube[Right][1][0]);
 
-					if (this->cube[Top][0][1], this->cube[Back][0][1])
-						if (this->cube[Top][1][0], this->cube[Left][0][1])
-							if (this->cube[Top][1][2], this->cube[Right][0][1])
+	if (this->cube[Top][0][1], this->cube[Back][0][1]);
+	if (this->cube[Top][1][0], this->cube[Left][0][1]);
+	if (this->cube[Top][1][2], this->cube[Right][0][1]);
 
-								if (this->cube[Left][0][1], this->cube[Back][1][2])
-									if (this->cube[Left][2][1], this->cube[Bottom][1][0])
-
-
-										if (this->cube[Right][1][2], this->cube[Back][1][0])
-											if (this->cube[Right][2][1], this->cube[Bottom][1][2])
-
-												if (this->cube[Bottom][2][1], this->cube[Back][2][1])
+	if (this->cube[Left][0][1], this->cube[Back][1][2]);
+	if (this->cube[Left][2][1], this->cube[Bottom][1][0]);
 
 
+	if (this->cube[Right][1][2], this->cube[Back][1][0]);
+	if (this->cube[Right][2][1], this->cube[Bottom][1][2]);
+
+	if (this->cube[Bottom][2][1], this->cube[Back][2][1]);
 
 
-													return true;
+
+
+	return true;
 }

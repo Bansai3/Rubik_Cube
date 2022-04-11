@@ -9,6 +9,6 @@ int main()
 	cube.load_from_file(filename);
 	cube.Mixing();
 	std::cout << cube;
-	std::cout << cube.checkState();
+	//std::cout << cube.checkState();
 	return 0;
 }
