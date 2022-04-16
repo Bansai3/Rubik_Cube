@@ -11,7 +11,7 @@ enum Facet
 {
 	Top = 0,
 	Bottom = 1,
-	Forward = 2,
+	Front = 2,
 	Back = 3,
 	Left = 4,
 	Right = 5
@@ -27,10 +27,20 @@ enum Color
 	W
 };
 
+/*enum Rotation
+{
+	F,
+	B,
+	L,
+	R,
+	U,
+	D
+};*/
+
 class Cube
 {
-	Color cube[6][3][3];
-	void turn_matrix(int facet, bool cw);
+	char cube[6][3][3];
+	void turnMatrix(int facet, bool cw);
 	char colors[6] = { 'R', 'B', 'Y', 'O', 'G', 'W' };
 	std::map<std::set<char>, int> centerCubes = { {{'R','O'}, 0}, {{'B','G'}, 0}, {{'Y','W'}, 0} };
 
@@ -40,17 +50,16 @@ class Cube
 												  {{'O','W'}, 0}, {{'G','R'}, 0}, {{'B','W'}, 0}
 	};
 
-	std::map<std::string, int> cornerCubes = { {{'W','G','O'}, 0}, {{'G','O','Y'}, 0},
-											   {{'O','Y','B'}, 0}, {{'Y','B','R'}, 0},
-											   {{'B','R','W'}, 0}, {{'R','W','G'}, 0},
-											   {{'W','O','B'}, 0}, {{'G','Y','R'}, 0}
+	std::map<std::set<char>, int> cornerCubes = { {{'W','G','O'}, 0}, {{'G','O','Y'}, 0},
+												  {{'O','Y','B'}, 0}, {{'Y','B','R'}, 0},
+												  {{'B','R','W'}, 0}, {{'R','W','G'}, 0},
+												  {{'W','O','B'}, 0}, {{'G','Y','R'}, 0}
 	};
-	void turnMatrix(int matrixIndex, bool isClockwise = true);
 public:
 	Cube();
 	bool checkState();
 	friend std::ostream& operator<<(std::ostream& out, Cube& cube);
-	void load_from_file(std::string filename);
+	void LoadFromFile(std::string filename);
 	void F(bool cw = true);
 	void B(bool cw = true);
 	void L(bool cw = true);
@@ -58,8 +67,7 @@ public:
 	void U(bool cw = true);
 	void D(bool cw = true);
 	void Mixing();
-
-
+	long long getHash();
 };
 
 /*
