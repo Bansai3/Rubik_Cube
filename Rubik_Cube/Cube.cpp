@@ -1087,6 +1087,8 @@ void Cube::getCornerCubes()
 
 	while (1)
 	{
+		if (!checkCentreCubes())
+			break;
 		cornersReady = true;
 
 		for (int i = 0; i <= 2; i += 2)
@@ -1449,53 +1451,130 @@ void Cube::getCornerCubes()
 			}
 		}
 
-		for (int i = 0; i < 3; i++)
-		{
-			for (int j = 0; j < 3; j++)
-			{
-				if (i != 1 && j != 1)
-				{
-					if (cube[Top][i][j] != topColour)
-					{
-						cornersReady = false;
-						break;
-					}
-				}
-			}
-			if (cornersReady == false)
-				break;
-		}
-
 		for (int i = Front; i <= Right; i++)
 		{
-			if (cube[i][0][0] != cube[i][0][2] || cube[i][0][0] != cube[i][1][1])
+			if (cube[i][0][0] != cube[i][0][1])
 			{
-				cornersReady = false;
-				break;
+				if (i == Front)
+				{
+					L();
+					D();
+					L(0);
+				}
+				else if (i == Right)
+				{
+					F();
+					D();
+					F(0);
+				}
+				else if (i == Back)
+				{
+					R();
+					D();
+					R(0);
+				}
+				else if (i == Left)
+				{
+					B();
+					D();
+					B(0);
+				}
+			}
+			if (cube[i][0][2] != cube[i][0][1])
+			{
+				if (i == Front)
+				{
+					R(0);
+					D(0);
+					R();
+				}
+				else if (i == Right)
+				{
+					B(0);
+					D(0);
+					B();
+				}
+				else if (i == Back)
+				{
+					L(0);
+					D(0);
+					L();
+				}
+				else if (i == Left)
+				{
+					F(0);
+					D(0);
+					F();
+				}
 			}
 		}
-		if (cornersReady == true)
-			break;
+
+
+			for (int i = 0; i < 3; i++)
+			{
+				for (int j = 0; j < 3; j++)
+				{
+					if (i != 1 && j != 1)
+					{
+						if (cube[Top][i][j] != topColour)
+						{
+							cornersReady = false;
+							break;
+						}
+					}
+				}
+				if (cornersReady == false)
+					break;
+			}
+
+			for (int i = Front; i <= Right; i++)
+			{
+				if (cube[i][0][0] != cube[i][0][2] || cube[i][0][0] != cube[i][1][1])
+				{
+					cornersReady = false;
+					break;
+				}
+			}
+			if (cornersReady == true)
+				break;
 	}
 }
 
 void Cube::getBottonCross()
 {
+	/*F R U R' U' F'
+	* F();
+	* R();
+	* U();
+	* R(0);
+	* U(0);
+	* F(0);
+	*/
+
 	char downColour = cube[Bottom][1][1];
 	int count_1 = 0;
 	int count_2 = 0;
 
 	for (int i = 0; i < 3; i++)
 	{
-		if (cube[Bottom][i][1] == downColour)
+		if (cube[Bottom][i][1] == downColour && i != 1)
 			count_1++;
-		if (cube[Bottom][1][i] == downColour)
+		if (cube[Bottom][1][i] == downColour && i != 1)
 			count_2++;
 	}
 
-	if (count_1 == 3 && count_2 == 3)
+	if (count_1 == 2 && count_2 == 2)
 		return;
-	if (count_1 == 3)
+	if (count_1 == 0 && count_2 == 0)
+	{
+		F();
+		L();
+		D();
+		L(0);
+		D(0);
+		F(0);
+	}
+	if (count_1 == 2)
 	{
 		R();
 		F();
@@ -1504,7 +1583,7 @@ void Cube::getBottonCross()
 		D(0);
 		R(0);
 	}
-	else if (count_2 == 3)
+	else if (count_2 == 2)
 	{
 		B();
 		R();
@@ -1661,7 +1740,9 @@ void Cube::getThirdLayer()
 			L();
 			while (1)
 			{
-				while (cube[Front][2][1] != colour_1 && cube[Left][2][1] != colour_2)
+				if (colour_1 == 'W' || colour_2 == 'W')
+					break;
+				while (cube[Front][2][1] != colour_1 || cube[Left][2][1] != colour_2)
 				{
 					D(0);
 				}
