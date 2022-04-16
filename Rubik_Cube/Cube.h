@@ -27,16 +27,6 @@ enum Color
 	W
 };
 
-/*enum Rotation
-{
-	F,
-	B,
-	L,
-	R,
-	U,
-	D
-};*/
-
 class Cube
 {
 	char cube[6][3][3];
@@ -68,6 +58,24 @@ public:
 	void D(bool cw = true);
 	void Mixing();
 	long long getHash();
+	void cubeSolve();
+	void getCross();
+	bool checkCross();
+	bool checkSecondLayer();
+	bool checkCornerCubes();
+	bool checkCentreCubes();
+	bool checkBottomCross();
+	bool checkSideCubesBottomLayer();
+	bool checkCornerCubesBottomLayer();
+	bool checkThirdLayer();
+	bool checkLastLayer();
+	void getSecondLayer();
+	void getCentreCubes();
+	void getCornerCubes();
+	void getBottonCross();
+	void getSideCubesBottomLayer();
+	void getCornerCubesBottomLayer();
+	void getThirdLayer();
 };
 
 /*

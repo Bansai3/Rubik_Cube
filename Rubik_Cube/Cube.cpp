@@ -103,8 +103,6 @@ void Cube::LoadFromFile(std::string filename)
 	}
 }
 
-
-
 void Cube::turnMatrix(int facet, bool cw)
 {
 	char facet_matrix[3][3];
@@ -253,7 +251,7 @@ void Cube::turnMatrix(int facet, bool cw)
 			for (int i = 0; i < 3; i++)
 			{
 				cube[Top][i][0] = side_col_matrix[i][1];
-				cube[Front][i][0] = side_col_matrix[2 - i][2];
+				cube[Front][i][0] = side_col_matrix[i][2];
 				cube[Bottom][i][0] = side_col_matrix[2 - i][3];
 				cube[Back][i][2] = side_col_matrix[2 - i][0];
 			}
@@ -357,17 +355,35 @@ void Cube::Mixing()
 	{
 		int randNumber = rand() % 6;
 		if (randNumber == 0)
+		{
 			F();
+			std::cout << "F" << std::endl;
+		}
 		if (randNumber == 1)
+		{
 			B();
+			std::cout << "B" << std::endl;
+		}
 		if (randNumber == 2)
+		{
 			L();
+			std::cout << "L" << std::endl;
+		}
 		if (randNumber == 3)
+		{
 			R();
+			std::cout << "R" << std::endl;
+		}
 		if (randNumber == 4)
+		{
 			U();
+			std::cout << "U" << std::endl;
+		}
 		if (randNumber == 5)
+		{
 			D();
+			std::cout << "D" << std::endl;
+		}
 	}
 }
 
@@ -412,6 +428,1417 @@ long long Cube::getHash()
 	return hash;
 }
 
+void Cube::cubeSolve()
+{
+	char topColour = cube[Top][1][1];
+	bool crossReady = true;
+	bool cornersReady = true;
+
+	while (1)
+	{
+		getCross();
+
+		getCentreCubes();
+
+		getCornerCubes();
+
+		if (!checkCentreCubes() || !checkCentreCubes() || !checkCross())
+			continue;
+
+		getSecondLayer();
+
+		getBottonCross();
+
+		if (!checkBottomCross())
+			continue;
+
+		if (!checkCentreCubes() || !checkCentreCubes() || !checkCross())
+			continue;
+		
+		getSideCubesBottomLayer();
+
+		if (!checkSideCubesBottomLayer())
+			continue;
+
+		getCornerCubesBottomLayer();
+
+		if (!checkCornerCubesBottomLayer())
+			continue;
+
+		getThirdLayer();
+
+		if (!checkThirdLayer() || !checkLastLayer())
+			continue;
+
+		break;
+	}
+}
+
+void Cube::getCross()
+{
+	bool crossReady;
+	char topColour = cube[Top][1][1];
+	while (1)
+	{
+		crossReady = true;
+		int count = 0;
+
+		if (cube[Bottom][0][1] == topColour)
+		{
+			while (cube[Top][2][1] == topColour)
+			{
+				if (count > 3)
+					break;
+				U();
+				count++;
+			}
+			if (count <= 3)
+			{
+				F();
+				F();
+			}
+			count = 0;
+		}
+		if (cube[Bottom][1][0] == topColour)
+		{
+			while (cube[Top][1][0] == topColour)
+			{
+				if (count > 3)
+					break;
+				U();
+				count++;
+			}
+			if (count <= 3)
+			{
+				L();
+				L();
+			}
+			count = 0;
+		}
+		if (cube[Bottom][1][2] == topColour)
+		{
+			while (cube[Top][1][2] == topColour)
+			{
+				if (count > 3)
+					break;
+				U();
+				count++;
+			}
+			if (count <= 3)
+			{
+				R();
+				R();
+			}
+			count = 0;
+		}
+		if (cube[Bottom][2][1] == topColour)
+		{
+			while (cube[Top][0][1] == topColour)
+			{
+				if (count > 3)
+					break;
+				U();
+				count++;
+			}
+			if (count <= 3)
+			{
+				B();
+				B();
+			}
+			count = 0;
+		}
+
+		for (int i = Front; i <= Right; i++)
+		{
+			if (cube[i][2][1] == topColour)
+			{
+				if (i == Front)
+				{
+					while (cube[Top][2][1] == topColour)
+					{
+						if (count > 3)
+							break;
+						U();
+						count++;
+					}
+					if (count <= 3)
+					{
+						F(0);
+						U(0);
+						R();
+						U();
+					}
+				}
+				else if (i == Back)
+				{
+					while (cube[Top][0][1] == topColour)
+					{
+						if (count > 3)
+							break;
+						U();
+						count++;
+					}
+					if (count <= 3)
+					{
+						B(0);
+						U(0);
+						L();
+						U();
+					}
+				}
+				else if (i == Right)
+				{
+					while (cube[Top][1][2] == topColour)
+					{
+						if (count > 3)
+							break;
+						U();
+						count++;
+					}
+					if (count <= 3)
+					{
+						R(0);
+						U(0);
+						B();
+						U();
+					}
+				}
+				else if (i == Left)
+				{
+					while (cube[Top][1][0] == topColour)
+					{
+						if (count > 3)
+							break;
+						U();
+						count++;
+					}
+					if (count <= 3)
+					{
+						L(0);
+						U(0);
+						F();
+						U();
+					}
+				}
+			}
+
+			count = 0;
+
+			if (cube[i][1][0] == topColour || cube[i][1][2] == topColour)
+			{
+				if (cube[i][1][0] == topColour)
+				{
+					if (i == Front)
+					{
+						while (cube[Top][1][0] == topColour)
+						{
+							if (count > 3)
+								break;
+							U();
+							count++;
+						}
+						if (count <= 3)
+						{
+							L(0);
+						}
+					}
+					else if (i == Back)
+					{
+						while (cube[Top][1][2] == topColour)
+						{
+							if (count > 3)
+								break;
+							U();
+							count++;
+						}
+						if (count <= 3)
+						{
+							R(0);
+						}
+					}
+					else if (i == Right)
+					{
+						while (cube[Top][2][1] == topColour)
+						{
+							if (count > 3)
+								break;
+							U();
+							count++;
+						}
+						if (count <= 3)
+						{
+							F(0);
+						}
+					}
+					else if (i == Left)
+					{
+						while (cube[Top][0][1] == topColour)
+						{
+							if (count > 3)
+								break;
+							U();
+							count++;
+						}
+						if (count <= 3)
+						{
+							B(0);
+						}
+					}
+				}
+
+				count = 0;
+
+				if (cube[i][1][2] == topColour)
+				{
+					if (i == Front)
+					{
+						while (cube[Top][1][2] == topColour)
+						{
+							if (count > 3)
+								break;
+							U();
+							count++;
+						}
+						if (count <= 3)
+						{
+							R();
+						}
+					}
+					else if (i == Back)
+					{
+						while (cube[Top][1][0] == topColour)
+						{
+							if (count > 3)
+								break;
+							U();
+							count++;
+						}
+						if (count <= 3)
+						{
+							L();
+						}
+					}
+					else if (i == Right)
+					{
+						while (cube[Top][0][1] == topColour)
+						{
+							if (count > 3)
+								break;
+							U();
+							count++;
+						}
+						if (count <= 3)
+						{
+							B();
+						}
+					}
+					else if (i == Left)
+					{
+						while (cube[Top][2][1] == topColour)
+						{
+							if (count > 3)
+								break;
+							U();
+							count++;
+						}
+						if (count <= 3)
+						{
+							F();
+						}
+					}
+				}
+			}
+
+			count = 0;
+
+			if (cube[i][0][1] == topColour)
+			{
+				if (i == Front)
+				{
+					F();
+					U(0);
+					R();
+					U();
+				}
+				else if (i == Back)
+				{
+					B();
+					U(0);
+					L();
+					U();
+				}
+				else if (i == Right)
+				{
+					R();
+					U(0);
+					B();
+					U();
+				}
+				else if (i == Left)
+				{
+					L();
+					U(0);
+					F();
+					U();
+				}
+			}
+		}
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				if (i != 1 && j != 1)
+					continue;
+				if (cube[Top][i][j] != topColour)
+				{
+					crossReady = false;
+					break;
+				}
+			}
+			if (crossReady == false)
+				break;
+		}
+		if (crossReady == true)
+			break;
+	}
+}
+
+void Cube::getSecondLayer()
+{
+	char downColour = cube[Bottom][1][1];
+	char topColour = cube[Top][1][1];
+
+	int facet;
+	char colour_1 = -100;
+	char colour_2 = -100;
+
+	while (1)
+	{
+		colour_1 = -100;
+
+		if (cube[Bottom][0][1] != downColour && cube[Front][2][1] != downColour)
+		{
+			facet = Front;
+			colour_1 = cube[Bottom][0][1];
+			colour_2 = cube[Front][2][1];
+		}
+		else if (cube[Bottom][1][0] != downColour && cube[Left][2][1] != downColour)
+		{
+			facet = Left;
+			colour_1 = cube[Bottom][1][0];
+			colour_2 = cube[Left][2][1];
+		}
+		else if (cube[Bottom][1][2] != downColour && cube[Right][2][1] != downColour)
+		{
+			facet = Right;
+			colour_1 = cube[Bottom][1][2];
+			colour_2 = cube[Right][2][1];
+		}
+		else if (cube[Bottom][2][1] != downColour && cube[Back][2][1] != downColour)
+		{
+			facet = Back;
+			colour_1 = cube[Bottom][2][1];
+			colour_2 = cube[Back][2][1];
+		}
+
+		if (colour_1 == -100 || colour_1 == topColour)
+			break;
+		while (colour_2 != cube[facet][1][1])
+		{
+			D();
+			if (facet == Front)
+				facet = Right;
+			else if (facet == Right)
+				facet = Back;
+			else if (facet == Back)
+				facet = Left;
+			else if (facet == Left)
+				facet = Front;
+		}
+
+		if (facet == Front)
+		{
+			if (cube[Right][1][1] == colour_1)
+			{
+				D(0);
+				R(0);
+				D();
+				R();
+				D();
+				F();
+				D(0);
+				F(0);
+			}
+			else if (cube[Left][1][1] == colour_1)
+			{
+				D();
+				L();
+				D(0);
+				L(0);
+				D(0);
+				F(0);
+				D();
+				F();
+			}
+		}
+		else if (facet == Right)
+		{
+			if (cube[Back][1][1] == colour_1)
+			{
+				D(0);
+				B(0);
+				D();
+				B();
+				D();
+				R();
+				D(0);
+				R(0);
+			}
+			else if (cube[Front][1][1] == colour_1)
+			{
+				D();
+				F();
+				D(0);
+				F(0);
+				D(0);
+				R(0);
+				D();
+				R();
+			}
+		}
+		else if (facet == Back)
+		{
+			if (cube[Left][1][1] == colour_1)
+			{
+				D(0);
+				L(0);
+				D();
+				L();
+				D();
+				B();
+				D(0);
+				B(0);
+			}
+			else if (cube[Right][1][1] == colour_1)
+			{
+				D();
+				R();
+				D(0);
+				R(0);
+				D(0);
+				B(0);
+				D();
+				B();
+			}
+		}
+		else if (facet == Left)
+		{
+			if (cube[Front][1][1] == colour_1)
+			{
+				D(0);
+				F(0);
+				D();
+				F();
+				D();
+				L();
+				D(0);
+				L(0);
+			}
+			else if (cube[Back][1][1] == colour_1)
+			{
+				D();
+				B();
+				D(0);
+				B(0);
+				D(0);
+				L(0);
+				D();
+				L();
+			}
+		}
+
+		if (cube[Front][1][0] == cube[Left][1][1] && cube[Left][1][2] == cube[Front][1][1])
+		{
+			D();
+			L();
+			D(0);
+			L(0);
+			D(0);
+			F(0);
+			D();
+			F();
+		}
+		else if (cube[Front][1][2] == cube[Right][1][1] && cube[Right][1][0] == cube[Front][1][1])
+		{
+			D(0);
+			R(0);
+			D();
+			R();
+			D();
+			F();
+			D(0);
+			F(0);
+		}
+		else if (cube[Back][1][0] == cube[Right][1][1] && cube[Right][1][2] == cube[Back][1][1])
+		{
+			D();
+			R();
+			D(0);
+			R(0);
+			D(0);
+			B(0);
+			D();
+			B();
+		}
+		else if (cube[Back][1][2] == cube[Left][1][1] && cube[Left][1][0] == cube[Back][1][1])
+		{
+			D(0);
+			L(0);
+			D();
+			L();
+			D();
+			B();
+			D(0);
+			B(0);
+		}
+		if (checkSecondLayer())
+			break;
+	}
+}
+
+void Cube::getCentreCubes()
+{
+	while (1)
+	{
+		if (cube[Front][0][1] == cube[Front][1][1] && cube[Right][0][1] == cube[Right][1][1])
+		{
+			if (cube[Back][0][1] == cube[Back][1][1] && cube[Left][0][1] == cube[Left][1][1])
+				break;
+			B();
+			U();
+			B(0);
+			U(0);
+			B();
+			break;
+		}
+		if (cube[Front][0][1] == cube[Front][1][1] && cube[Left][0][1] == cube[Left][1][1])
+		{
+			if (cube[Back][0][1] == cube[Back][1][1] && cube[Right][0][1] == cube[Right][1][1])
+				break;
+			R();
+			U();
+			R(0);
+			U(0);
+			R();
+			break;
+		}
+		if (cube[Back][0][1] == cube[Back][1][1] && cube[Right][0][1] == cube[Right][1][1])
+		{
+			if (cube[Front][0][1] == cube[Front][1][1] && cube[Left][0][1] == cube[Left][1][1])
+				break;
+			L();
+			U();
+			L(0);
+			U(0);
+			L();
+			break;
+		}
+		if (cube[Back][0][1] == cube[Back][1][1] && cube[Left][0][1] == cube[Left][1][1])
+		{
+			if (cube[Front][0][1] == cube[Front][1][1] && cube[Right][0][1] == cube[Right][1][1])
+				break;
+			F();
+			U();
+			F(0);
+			U(0);
+			F();
+			break;
+		}
+
+		if (cube[Front][0][1] == cube[Front][1][1] && cube[Back][0][1] == cube[Back][1][1])
+		{
+			if (cube[Right][0][1] == cube[Right][1][1] && cube[Left][0][1] == cube[Left][1][1])
+				break;
+			R();
+			U();
+			R(0);
+			U(0);
+			R();
+		}
+
+		if (cube[Right][0][1] == cube[Right][1][1] && cube[Left][0][1] == cube[Left][1][1])
+		{
+			B();
+			U();
+			B(0);
+			U(0);
+			B();
+		}
+
+		U();
+	}
+}
+
+void Cube::getCornerCubes()
+{
+	char topColour = cube[Top][1][1];
+
+	bool cornersReady;
+
+	while (1)
+	{
+		cornersReady = true;
+
+		for (int i = 0; i <= 2; i += 2)
+		{
+			for (int j = 0; j <= 2; j += 2)
+			{
+				if (cube[Bottom][i][j] == topColour)
+				{
+					char colour_1;
+					char colour_2;
+					int facet_1;
+					int facet_2;
+
+					if (i == 0 && j == 0)
+					{
+						colour_1 = cube[Front][2][0];
+						colour_2 = cube[Left][2][2];
+						facet_1 = Front;
+						facet_2 = Left;
+					}
+					else if (i == 0 && j == 2)
+					{
+						colour_1 = cube[Right][2][0];
+						colour_2 = cube[Front][2][2];
+						facet_1 = Right;
+						facet_2 = Front;
+					}
+					else if (i == 2 && j == 0)
+					{
+						colour_1 = cube[Left][2][0];
+						colour_2 = cube[Back][2][2];
+						facet_1 = Left;
+						facet_2 = Back;
+					}
+					else if (i == 2 && j == 2)
+					{
+						colour_1 = cube[Back][2][0];
+						colour_2 = cube[Right][2][2];
+						facet_1 = Back;
+						facet_2 = Right;
+					}
+
+					while (cube[facet_1][1][1] != colour_2 || cube[facet_2][1][1] != colour_1)
+					{
+						D();
+						if (facet_1 == Front)
+						{
+							facet_1 = Right;
+							facet_2 = Front;
+						}
+						else if (facet_1 == Right)
+						{
+							facet_1 = Back;
+							facet_2 = Right;
+						}
+						else if (facet_1 == Back)
+						{
+							facet_1 = Left;
+							facet_2 = Back;
+						}
+						else if (facet_1 == Left)
+						{
+							facet_1 = Front;
+							facet_2 = Left;
+						}
+					}
+
+					if (facet_1 == Front && facet_2 == Left)
+					{
+						F(0);
+						D(0);
+						D(0);
+						F();
+						D();
+						F(0);
+						D(0);
+						F();
+					}
+					else if (facet_1 == Right && facet_2 == Front)
+					{
+						R(0);
+						D(0);
+						D(0);
+						R();
+						D();
+						R(0);
+						D(0);
+						R();
+					}
+					else if (facet_1 == Back && facet_2 == Right)
+					{
+						B(0);
+						D(0);
+						D(0);
+						B();
+						D();
+						B(0);
+						D(0);
+						B();
+					}
+					else if (facet_1 == Left && facet_2 == Back)
+					{
+						L(0);
+						D(0);
+						D(0);
+						L();
+						D();
+						L(0);
+						D(0);
+						L();
+					}
+				}
+			}
+		}
+
+		for (int k = Front; k <= Right; k++)
+		{
+			if (cube[k][2][0] == topColour || cube[k][2][2] == topColour)
+			{
+				if (cube[k][2][0] == topColour)
+				{
+					char colour_1;
+					char colour_2;
+					int facet_1;
+					int facet_2;
+
+					if (k == Front)
+					{
+						colour_1 = cube[Bottom][0][0];
+						colour_2 = cube[Left][2][2];
+						facet_1 = Front;
+						facet_2 = Left;
+					}
+					else if (k == Right)
+					{
+						colour_1 = cube[Bottom][0][2];
+						colour_2 = cube[Front][2][2];
+						facet_1 = Right;
+						facet_2 = Front;
+					}
+					else if (k == Back)
+					{
+						colour_1 = cube[Bottom][2][2];
+						colour_2 = cube[Right][2][2];
+						facet_1 = Back;
+						facet_2 = Right;
+					}
+					else if (k == Left)
+					{
+						colour_1 = cube[Bottom][2][0];
+						colour_2 = cube[Back][2][2];
+						facet_1 = Left;
+						facet_2 = Back;
+					}
+					while (cube[facet_1][1][1] != colour_1 || cube[facet_2][1][1] != colour_2)
+					{
+						D();
+						if (facet_1 == Front)
+						{
+							facet_1 = Right;
+							facet_2 = Front;
+						}
+						else if (facet_1 == Right)
+						{
+							facet_1 = Back;
+							facet_2 = Right;
+						}
+						else if (facet_1 == Back)
+						{
+							facet_1 = Left;
+							facet_2 = Back;
+						}
+						else if (facet_1 == Left)
+						{
+							facet_1 = Front;
+							facet_2 = Left;
+						}
+					}
+					if (facet_1 == Front && facet_2 == Left)
+					{
+						F(0);
+						D(0);
+						F();
+						D();
+					}
+					else if (facet_1 == Right && facet_2 == Front)
+					{
+						R(0);
+						D(0);
+						R();
+						D();
+					}
+					else if (facet_1 == Back && facet_2 == Right)
+					{
+						B(0);
+						D(0);
+						B();
+						D();
+					}
+					else if (facet_1 == Left && facet_2 == Back)
+					{
+						L(0);
+						D(0);
+						L();
+						D();
+					}
+				}
+
+				if (cube[k][2][2] == topColour)
+				{
+					char colour_1;
+					char colour_2;
+					int facet_1;
+					int facet_2;
+
+					if (k == Front)
+					{
+						colour_1 = cube[Right][2][0];
+						colour_2 = cube[Bottom][0][2];
+						facet_1 = Right;
+						facet_2 = Front;
+					}
+					else if (k == Right)
+					{
+						colour_1 = cube[Back][2][0];
+						colour_2 = cube[Bottom][2][2];
+						facet_1 = Back;
+						facet_2 = Right;
+					}
+					else if (k == Back)
+					{
+						colour_1 = cube[Left][2][0];
+						colour_2 = cube[Bottom][2][0];
+						facet_1 = Left;
+						facet_2 = Back;
+					}
+					else if (k == Left)
+					{
+						colour_1 = cube[Front][2][0];
+						colour_2 = cube[Bottom][0][0];
+						facet_1 = Front;
+						facet_2 = Left;
+					}
+					while (cube[facet_1][1][1] != colour_1 || cube[facet_2][1][1] != colour_2)
+					{
+						D();
+						if (facet_1 == Front)
+						{
+							facet_1 = Right;
+							facet_2 = Front;
+						}
+						else if (facet_1 == Right)
+						{
+							facet_1 = Back;
+							facet_2 = Right;
+						}
+						else if (facet_1 == Back)
+						{
+							facet_1 = Left;
+							facet_2 = Back;
+						}
+						else if (facet_1 == Left)
+						{
+							facet_1 = Front;
+							facet_2 = Left;
+						}
+					}
+					if (facet_1 == Front && facet_2 == Left)
+					{
+						D(0);
+						F(0);
+						D();
+						F();
+					}
+					else if (facet_1 == Right && facet_2 == Front)
+					{
+						D(0);
+						R(0);
+						D();
+						R();
+					}
+					else if (facet_1 == Back && facet_2 == Right)
+					{
+						D(0);
+						B(0);
+						D();
+						B();
+					}
+					else if (facet_1 == Left && facet_2 == Back)
+					{
+						D(0);
+						L(0);
+						D();
+						L();
+					}
+				}
+			}
+		}
+
+
+		for (int k = Front; k <= Right; k++)
+		{
+			if (cube[k][0][0] == topColour || cube[k][0][2] == topColour)
+			{
+				if (cube[k][0][0] == topColour)
+				{
+					if (k == Front)
+					{
+						F(0);
+						U(0);
+						F();
+					}
+					else if (k == Right)
+					{
+						R(0);
+						U(0);
+						R();
+					}
+					else if (k == Back)
+					{
+						B(0);
+						U(0);
+						B();
+					}
+					else if (k == Left)
+					{
+						L(0);
+						U(0);
+						L();
+					}
+				}
+				if (cube[k][0][2] == topColour)
+				{
+					if (k == Front)
+					{
+						F();
+						U();
+						F(0);
+					}
+					else if (k == Right)
+					{
+						R();
+						U();
+						R(0);
+					}
+					else if (k == Back)
+					{
+						B();
+						U();
+						B(0);
+					}
+					else if (k == Left)
+					{
+						L();
+						U();
+						L(0);
+					}
+
+				}
+			}
+		}
+
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				if (i != 1 && j != 1)
+				{
+					if (cube[Top][i][j] != topColour)
+					{
+						cornersReady = false;
+						break;
+					}
+				}
+			}
+			if (cornersReady == false)
+				break;
+		}
+
+		for (int i = Front; i <= Right; i++)
+		{
+			if (cube[i][0][0] != cube[i][0][2] || cube[i][0][0] != cube[i][1][1])
+			{
+				cornersReady = false;
+				break;
+			}
+		}
+		if (cornersReady == true)
+			break;
+	}
+}
+
+void Cube::getBottonCross()
+{
+	char downColour = cube[Bottom][1][1];
+	int count_1 = 0;
+	int count_2 = 0;
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (cube[Bottom][i][1] == downColour)
+			count_1++;
+		if (cube[Bottom][1][i] == downColour)
+			count_2++;
+	}
+
+	if (count_1 == 3 && count_2 == 3)
+		return;
+	if (count_1 == 3)
+	{
+		R();
+		F();
+		D();
+		F(0);
+		D(0);
+		R(0);
+	}
+	else if (count_2 == 3)
+	{
+		B();
+		R();
+		D();
+		R(0);
+		D(0);
+		B(0);
+	}
+
+	if (checkBottomCross())
+		return;
+
+	if (cube[Bottom][0][1] == downColour && cube[Bottom][1][0] == downColour)
+	{
+		B();
+		R();
+		D();
+		R(0);
+		D(0);
+		B(0);
+	}
+	else if (cube[Bottom][0][1] == downColour && cube[Bottom][1][2] == downColour)
+	{
+		L();
+		B();
+		D();
+		B(0);
+		D(0);
+		L(0);
+	}
+	else if (cube[Bottom][1][0] == downColour && cube[Bottom][2][1] == downColour)
+	{
+		R();
+		F();
+		D();
+		F(0);
+		D(0);
+		R(0);
+	}
+	else if (cube[Bottom][2][1] == downColour && cube[Bottom][1][2] == downColour)
+	{
+		F();
+		L();
+		D();
+		L(0);
+		D(0);
+		F(0);
+	}
+}
+
+void Cube::getSideCubesBottomLayer()
+{
+	while (1)
+	{
+		while (cube[Front][2][1] != cube[Front][1][1])
+		{
+			D();
+		}
+
+		if (cube[Left][2][1] == cube[Left][1][1])
+		{
+			if (!checkSideCubesBottomLayer())
+			{
+				F();
+				D();
+				F(0);
+				D();
+				F();
+				D();
+				D();
+				F(0);
+				D();
+			}
+		}
+		else if (cube[Right][2][1] == cube[Right][1][1])
+		{
+			if (!checkSideCubesBottomLayer())
+			{
+				R();
+				D();
+				R(0);
+				D();
+				R();
+				D();
+				D();
+				R(0);
+				D();
+			}
+		}
+		else
+		{
+			L();
+			D();
+			L(0);
+			D();
+			L();
+			D();
+			D();
+			L(0);
+		}
+		if (checkSideCubesBottomLayer())
+			break;
+	}
+}
+
+void Cube::getCornerCubesBottomLayer()
+{
+	char downColour = cube[Bottom][1][1];
+	while (1)
+	{
+		if (cube[Front][2][2] == downColour)
+		{
+			U();
+			R();
+			U(0);
+			R(0);
+			U();
+			R();
+			U(0);
+			R(0);
+		}
+		else if (cube[Right][2][0] == downColour)
+		{
+			R();
+			U();
+			R(0);
+			U(0);
+			R();
+			U();
+			R(0);
+			U(0);
+		}
+		else
+			D();
+		if (checkCornerCubesBottomLayer())
+			break;
+	}
+}
+
+void Cube::getThirdLayer()
+{
+	char colour_1;
+	char colour_2;
+
+	while (!checkThirdLayer())
+	{
+		if (cube[Front][2][0] != cube[Front][2][1] && cube[Left][2][2] != cube[Left][2][1])
+		{
+			colour_1 = cube[Front][2][0];
+			colour_2 = cube[Left][2][2];
+			L(0);
+			U();
+			U();
+			L();
+			while (1)
+			{
+				while (cube[Front][2][1] != colour_1 && cube[Left][2][1] != colour_2)
+				{
+					D(0);
+				}
+				colour_1 = cube[Front][2][0];
+				colour_2 = cube[Left][2][2];
+				L(0);
+				U();
+				U();
+				L();
+				if (checkThirdLayer())
+					break;
+			}
+		}
+		D(0);
+	}
+
+	while (!checkLastLayer())
+	{
+		D();
+	}
+
+}
+
+bool Cube::checkLastLayer()
+{
+	for (int i = Front; i <= Right; i++)
+	{
+		if (cube[i][2][1] != cube[i][1][1])
+			return false;
+	}
+	return true;
+}
+
+bool Cube::checkCross()
+{
+	char topColour = cube[Top][1][1];
+
+	bool crossReady = true;
+
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			if (i != 1 && j != 1)
+				continue;
+			if (cube[Top][i][j] != topColour)
+			{
+				crossReady = false;
+				break;
+			}
+		}
+		if (crossReady == false)
+			break;
+	}
+	if (crossReady == true)
+		return true;
+	else
+		return false;
+}
+
+bool Cube::checkSecondLayer()
+{
+	bool BottonCubesReady = true;
+
+	for (int i = Front; i <= Right; i++)
+	{
+		if (cube[i][1][0] != cube[i][1][1] || cube[i][1][2] != cube[i][1][1])
+		{
+			BottonCubesReady = false;
+			break;
+		}
+	}
+	if (BottonCubesReady)
+		return true;
+	else
+		return false;
+}
+
+bool Cube::checkCornerCubes()
+{
+	bool cornersReady = true;
+
+	for (int i = Front; i <= Right; i++)
+	{
+		if (cube[i][0][0] != cube[i][0][2] || cube[i][0][0] != cube[i][1][1])
+		{
+			cornersReady = false;
+			break;
+		}
+	}
+	if (cornersReady == true)
+		return true;
+	else
+		return false;
+}
+
+bool Cube::checkCentreCubes()
+{
+	for (int i = Front; i <= Right; i++)
+	{
+		if (cube[i][1][1] != cube[i][0][1])
+			return false;
+	}
+	return true;
+}
+
+bool Cube::checkBottomCross()
+{
+	bool BottomCrossReady = true;
+	char downColour = cube[Bottom][1][1];
+
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			if (i != 1 && j != 1)
+				continue;
+
+			if (cube[Bottom][i][j] != downColour)
+			{
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+bool Cube::checkSideCubesBottomLayer()
+{
+	for (int i = Front; i <= Right; i++)
+	{
+		if (cube[i][2][1] != cube[i][1][1])
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+bool Cube::checkCornerCubesBottomLayer()
+{
+	char downColour = cube[Bottom][1][1];
+
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			if (cube[Bottom][i][j] != downColour)
+				return false;
+		}
+	}
+
+	for (int i = Front; i <= Right; i++)
+	{
+		if (cube[i][2][1] != cube[i][1][1])
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool Cube::checkThirdLayer()
+{
+	for (int i = Front; i <= Right; i++)
+	{
+		if (cube[i][2][0] != cube[i][2][1] || cube[i][2][2] != cube[i][2][1])
+			return false;
+	}
+
+	return true;
+}
+
+
+
+
 Cube::Cube()
 {
 
@@ -438,26 +1865,7 @@ bool Cube::checkState()
 	centerCubes[{this->cube[Front][1][1], this->cube[Back][1][1]}]++;
 	centerCubes[{this->cube[Top][1][1], this->cube[Bottom][1][1]}]++;
 	centerCubes[{this->cube[Left][1][1], this->cube[Right][1][1]}]++;
-	for (int i = 0; i < 5; i += 2)
-	{
-		if (abs(this->cube[i + 1][1][1] - this->cube[i][1][1]) != 3)
-			return false;
-	}
-	if (this->cube[Forward][0][1], this->cube[Top][2][1]);
-	if (this->cube[Forward][1][0], this->cube[Left][2][1]);
-	if (this->cube[Forward][2][1], this->cube[Bottom][0][1]);
-	if (this->cube[Forward][1][2], this->cube[Right][1][0]);
-
-	if (this->cube[Top][0][1], this->cube[Back][0][1]);
-	if (this->cube[Top][1][0], this->cube[Left][0][1]);
-	if (this->cube[Top][1][2], this->cube[Right][0][1]);
-
-	if (this->cube[Left][0][1], this->cube[Back][1][2]);
-	if (this->cube[Left][2][1], this->cube[Bottom][1][0]);
-
-
-
-	if (this->cube[Bottom][2][1], this->cube[Back][2][1]);
+	
 	middleCubes[{this->cube[Front][0][1], this->cube[Top][2][1]}]++;
 	middleCubes[{this->cube[Front][1][0], this->cube[Left][1][2]}]++;
 	middleCubes[{this->cube[Front][2][1], this->cube[Bottom][0][1]}]++;
@@ -482,13 +1890,13 @@ bool Cube::checkState()
 	cornerCubes[{this->cube[Right][2][2], this->cube[Back][0][2], this->cube[Bottom][2][2]}]++;
 
 	for (auto c : centerCubes)
-		if (c.second != 0)
+		if (c.second != 1)
 			return false;
 	for (auto c : middleCubes)
-		if (c.second != 0)
+		if (c.second != 1)
 			return false;
 	for (auto c : cornerCubes)
-		if (c.second != 0)
+		if (c.second != 1)
 			return false;
 
 	return true;
