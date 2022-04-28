@@ -359,27 +359,27 @@ void Cube::Mixing()
 			F();
 			std::cout << "F" << std::endl;
 		}
-		if (randNumber == 1)
+		else if (randNumber == 1)
 		{
 			B();
 			std::cout << "B" << std::endl;
 		}
-		if (randNumber == 2)
+		else if (randNumber == 2)
 		{
 			L();
 			std::cout << "L" << std::endl;
 		}
-		if (randNumber == 3)
+		else if (randNumber == 3)
 		{
 			R();
 			std::cout << "R" << std::endl;
 		}
-		if (randNumber == 4)
+		else if (randNumber == 4)
 		{
 			U();
 			std::cout << "U" << std::endl;
 		}
-		if (randNumber == 5)
+		else if (randNumber == 5)
 		{
 			D();
 			std::cout << "D" << std::endl;
