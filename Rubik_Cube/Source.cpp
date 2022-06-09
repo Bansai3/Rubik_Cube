@@ -1,8 +1,4 @@
 #include "Cube.h"
-#include <iostream>
-#include <set>
-#include <algorithm>
-
 
 int main()
 {
@@ -13,8 +9,13 @@ int main()
 	
 	cube.Mixing();
 	std::cout << cube << std::endl;
+	//std::cout << cube.checkState();
+
 	cube.cubeSolve();
-	std::cout << cube;
+	std::cout << cube << "\n";
+
+	for (auto i : cube.mass)
+		std::cout << i << " ";
 
 	return 0;
 }

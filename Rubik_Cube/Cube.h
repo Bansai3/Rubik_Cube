@@ -6,6 +6,7 @@
 #include <map>
 #include <set>
 #include <algorithm>
+#include<vector>
 
 enum Facet
 {
@@ -58,7 +59,7 @@ public:
 	void D(bool cw = true);
 	void Mixing();
 	long long getHash();
-	void cubeSolve();
+	std::vector<std::string> cubeSolve();
 	void getCross();
 	bool checkCross();
 	bool checkSecondLayer();
@@ -76,6 +77,7 @@ public:
 	void getSideCubesBottomLayer();
 	void getCornerCubesBottomLayer();
 	void getThirdLayer();
+	std::vector<std::string> mass;
 };
 
 /*
@@ -94,6 +96,7 @@ public:
 
 6) D > down - нижнюю сторону по часовой стрелке.
 
+//////////////////////////////////////////////////
 7) M > middle - средний слой, находящийся между правой (R) и левой (L) гранями, поворачиваем вниз(вращаем по часовой стрелке).
 
 8) M` > middle - средний слой, находящийся между правой (R) и левой (L) гранями, поворачиваем вверх(вращаем против часовой стрелке).

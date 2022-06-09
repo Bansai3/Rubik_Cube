@@ -1,5 +1,6 @@
 #include "Cube.h"
 
+
 std::ostream& operator<<(std::ostream& out, Cube& cube)
 {
 	for (int i = 0; i < 3; i++)
@@ -322,31 +323,55 @@ void Cube::turnMatrix(int facet, bool cw)
 void Cube::F(bool cw)
 {
 	turnMatrix(Front, cw);
+	if (cw)
+		mass.push_back("F");
+	else
+		mass.push_back("F'");
 }
 
 void Cube::B(bool cw)
 {
 	turnMatrix(Back, cw);
+	if (cw)
+		mass.push_back("B");
+	else
+		mass.push_back("B'");
 }
 
 void Cube::L(bool cw)
 {
 	turnMatrix(Left, cw);
+	if (cw)
+		mass.push_back("L");
+	else
+		mass.push_back("L'");
 }
 
 void Cube::R(bool cw)
 {
 	turnMatrix(Right, cw);
+	if (cw)
+		mass.push_back("R");
+	else
+		mass.push_back("R'");
 }
 
 void Cube::U(bool cw)
 {
 	turnMatrix(Top, cw);
+	if (cw)
+		mass.push_back("U");
+	else
+		mass.push_back("U'");
 }
 
 void Cube::D(bool cw)
 {
 	turnMatrix(Bottom, cw);
+	if (cw)
+		mass.push_back("D");
+	else
+		mass.push_back("D'");
 }
 
 void Cube::Mixing()
@@ -428,7 +453,7 @@ long long Cube::getHash()
 	return hash;
 }
 
-void Cube::cubeSolve()
+std::vector<std::string> Cube::cubeSolve()
 {
 	char topColour = cube[Top][1][1];
 	bool crossReady = true;
@@ -472,6 +497,7 @@ void Cube::cubeSolve()
 
 		break;
 	}
+	return mass;
 }
 
 void Cube::getCross()
@@ -1963,12 +1989,12 @@ bool Cube::checkState()
 
 	cornerCubes[{this->cube[Top][2][0], this->cube[Front][0][0], this->cube[Left][0][2]}]++;
 	cornerCubes[{this->cube[Top][2][2], this->cube[Front][0][2], this->cube[Right][0][0]}]++;
-	cornerCubes[{this->cube[Top][0][0], this->cube[Left][0][0], this->cube[Back][2][0]}]++;
+	cornerCubes[{this->cube[Top][0][0], this->cube[Left][0][0], this->cube[Back][0][2]}]++;
 	cornerCubes[{this->cube[Top][0][2], this->cube[Right][0][2], this->cube[Back][0][0]}]++;
 	cornerCubes[{this->cube[Front][2][0], this->cube[Left][2][2], this->cube[Bottom][0][0]}]++;
 	cornerCubes[{this->cube[Front][2][2], this->cube[Right][2][0], this->cube[Bottom][0][2]}]++;
 	cornerCubes[{this->cube[Left][2][0], this->cube[Back][2][2], this->cube[Bottom][2][0]}]++;
-	cornerCubes[{this->cube[Right][2][2], this->cube[Back][0][2], this->cube[Bottom][2][2]}]++;
+	cornerCubes[{this->cube[Right][2][2], this->cube[Back][2][0], this->cube[Bottom][2][2]}]++;
 
 	for (auto c : centerCubes)
 		if (c.second != 1)
